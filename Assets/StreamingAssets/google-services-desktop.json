@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "656877071337",
+    "project_id": "ad-manager-test-195e1",
+    "storage_bucket": "ad-manager-test-195e1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:656877071337:android:45e28be9811314cafa7978",
+        "android_client_info": {
+          "package_name": "com.DefaultCompany.AdvertisementExample"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBq-WhTYHO_X1EEUXf7AdjVBKq1WNOsFM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

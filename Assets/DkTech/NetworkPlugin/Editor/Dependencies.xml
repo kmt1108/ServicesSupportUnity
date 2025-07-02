@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dependencies>
+    <iosPods>
+        <iosPod name="AFNetworking" version="4.0.1" />
+    </iosPods>
+</dependencies>
