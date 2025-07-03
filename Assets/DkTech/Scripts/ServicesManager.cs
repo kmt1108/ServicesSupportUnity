@@ -45,7 +45,7 @@ namespace Dktech.Services
 
         public void ShowRateUI()
         {
-            if (rateUI==null)
+            if (!rateUI)
             {
                 var rating = Resources.Load<GameObject>(RATE_UI_PATH);
                 if (rating)

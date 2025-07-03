@@ -1,10 +1,11 @@
+using Dktech.Services;
 using Dktech.Services.Advertisement;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class TestShowAds : MonoBehaviour
 {
-    [SerializeField] Button btnShowBanner, btnShowInter, btnShowNative, btnShowReward, btnHideBanner, btnShowInterNative;
+    [SerializeField] Button btnShowBanner, btnShowInter, btnShowNative, btnShowReward, btnHideBanner, btnShowInterNative, btnShowRate;
     [SerializeField] InputField bannerName, interName, rewardName, nativeName;
     [SerializeField] NativeAdContent nativeAdContent;
     // Start is called before the first frame update
@@ -62,6 +63,10 @@ public class TestShowAds : MonoBehaviour
                 }
             },
             actClosed: (showed) => Debug.Log("inter closed: " + (showed ? "show success" : "show fail")));
+        });
+        btnShowRate.onClick.AddListener(() =>
+        {
+            ServicesManager.instance.ShowRateUI();
         });
     }
 }

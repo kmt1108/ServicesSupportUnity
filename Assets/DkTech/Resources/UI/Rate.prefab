@@ -37,10 +37,10 @@ RectTransform:
   - {fileID: 5230279611911008920}
   m_Father: {fileID: 5230279613293826242}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 100}
-  m_SizeDelta: {x: -160, y: 800}
+  m_SizeDelta: {x: 920, y: 800}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7099786631973519406
 CanvasRenderer:
@@ -878,7 +878,7 @@ RectTransform:
   m_GameObject: {fileID: 5230279613293826241}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8046759358193197475}
@@ -953,7 +953,6 @@ MonoBehaviour:
   - {fileID: 5230279613005683139}
   sprStar: {fileID: 21300000, guid: bc4e5e67c61d0ce4fa3aa061989db596, type: 3}
   sprStarNo: {fileID: 21300000, guid: 8dc7c5187c0d08f4eb734534263f2099, type: 3}
-  rateManager: {fileID: 0}
 --- !u!1 &5230279613297045216
 GameObject:
   m_ObjectHideFlags: 0
