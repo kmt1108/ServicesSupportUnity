@@ -130,14 +130,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 107940761021827294, guid: e41dd9b279878134eb10207b7f32f6bd, type: 3}
-      propertyPath: m_PresetInfoIsWorld
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2479365306941055675, guid: e41dd9b279878134eb10207b7f32f6bd, type: 3}
-      propertyPath: rateUI
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 3080458111079788809, guid: e41dd9b279878134eb10207b7f32f6bd, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -222,17 +214,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: ServicesManager
       objectReference: {fileID: 0}
-    - target: {fileID: 6670732520923219648, guid: e41dd9b279878134eb10207b7f32f6bd, type: 3}
-      propertyPath: m_PresetInfoIsWorld
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 2479365306941055675, guid: e41dd9b279878134eb10207b7f32f6bd, type: 3}
-    - {fileID: 4163476251184164286, guid: e41dd9b279878134eb10207b7f32f6bd, type: 3}
-    - {fileID: 4231851742232598315, guid: e41dd9b279878134eb10207b7f32f6bd, type: 3}
-    m_RemovedGameObjects:
-    - {fileID: 5230279613547932428, guid: e41dd9b279878134eb10207b7f32f6bd, type: 3}
-    - {fileID: 3564927812001471331, guid: e41dd9b279878134eb10207b7f32f6bd, type: 3}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e41dd9b279878134eb10207b7f32f6bd, type: 3}
@@ -550,9 +533,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28033b38dfe7adf4d82832e4aa999e51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bgClip: {fileID: 8300000, guid: be27ce124e0804144986cfbdf55152df, type: 3}
   audioClips:
   - {fileID: 8300000, guid: be27ce124e0804144986cfbdf55152df, type: 3}
-  bgClip: {fileID: 8300000, guid: be27ce124e0804144986cfbdf55152df, type: 3}
   audioSound: {fileID: 153098143}
   audioMusic: {fileID: 153098142}
 --- !u!4 &153098145
