@@ -34,7 +34,7 @@ namespace Dktech.Services.Editor
         [MenuItem("DKTech/Documentation",priority = 5)]
         private static void Documentation()
         {
-            Application.OpenURL("https://sites.google.com/view/dktech-unity-service-document");
+            Application.OpenURL("https://github.com/kmt1108/ServicesSupportUnity/blob/main/README.md");
         }
 
         private static void ShowIntegrationManager()
