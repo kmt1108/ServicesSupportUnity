@@ -9,6 +9,12 @@ using Firebase.RemoteConfig;
 #if adjust_enabled
 using AdjustSdk;
 #endif
+#if facebook_enabled
+using Facebook.Unity;
+#endif
+#if ironsource_enabled
+using Unity.Services.LevelPlay;
+#endif
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -20,7 +26,7 @@ using UnityEngine;
 namespace Dktech.Services.Firebase
 {
     public enum RemoteConfigFetchState { Waiting, Success, Failure }
-    public class FirebaseManager
+    public static class FirebaseManager
     {
         public static Action OnFetchCompleted { get; set; }
         public static Action OnFetchFailed { get; set; }
@@ -30,7 +36,7 @@ namespace Dktech.Services.Firebase
         static readonly Dictionary<string, object> defaults = new();
 
         [RuntimeInitializeOnLoadMethod]
-        protected static void Initialize()
+        public static void Initialize()
         {
             LoadSettings();
 #if firebase_enabled
@@ -52,7 +58,7 @@ namespace Dktech.Services.Firebase
                 }
                 else
                 {
-                    UnityEngine.Debug.LogError(System.String.Format(
+                    Debug.LogError(System.String.Format(
                       "Could not resolve all Firebase dependencies: {0}", dependencyStatus));
                     // Firebase Unity SDK is not safe to use here.
                 }
@@ -281,7 +287,7 @@ namespace Dktech.Services.Firebase
         public static bool GetDefaultCheckInternet() => settings.ConfigCheckInternet.BooleanValue;
         #endregion
 
-        #region Log Event Firebasse & Adjust
+        #region Log Event Firebasse & Adjust & Facebook
         public static void TrackEvent(string eventName)
         {
             Debug.LogWarning(eventName);
@@ -320,25 +326,43 @@ namespace Dktech.Services.Firebase
             Debug.LogError("DKTech SDK: Send revenue Applovin to Adjust: " + adInfo.Revenue);
 #endif
         }
+
+        public static void SendRevFacebook(MaxSdkBase.AdInfo adInfo)
+        {
+#if !UNITY_EDITOR && facebook_enabled
+            var param = new Dictionary<string, object>();
+            param[AppEventParameterName.Currency] = "USD";
+            FB.LogAppEvent("AdImpression", (float)adInfo.Revenue, param);
+#endif
+        }
 #endif
 #if ironsource_enabled
-        public static void SendRevFirebase(IronSourceImpressionData impressionData)
+        public static void SendRevFirebase(LevelPlayImpressionData impressionData)
         {
 #if !UNITY_EDITOR && firebase_enabled
             if (!InitComplete || impressionData == null) return;
             var impressionParameters = new[] {
                 new Parameter("ad_platform", "ironSource"),
-                new Parameter("ad_source", impressionData.adNetwork),
-                new Parameter("ad_unit_name", impressionData.adUnit),
-                new Parameter("ad_format", impressionData.instanceName),
+                new Parameter("ad_source", impressionData.AdNetwork),
+                new Parameter("ad_unit_name", impressionData.MediationAdUnitName),
+                new Parameter("ad_format", impressionData.AdFormat),
                 new Parameter("currency","USD"),
-                new Parameter("value", impressionData.revenue.Value)
+                new Parameter("value", impressionData.Revenue.Value)
             };
             FirebaseAnalytics.LogEvent("ad_impression", impressionParameters);
-            Debug.LogError("DKTech SDK: Send revenue Ironsource to Firebase: " + impressionData.revenue.Value);
+            Debug.LogError("DKTech SDK: Send revenue Ironsource to Firebase: " + impressionData.Revenue.Value);
 #endif
         }
-        public static void SendRevAdjust(IronSourceImpressionData impressionData)
+        
+        public static void SendRevFacebook(LevelPlayImpressionData impressionData)
+        {
+#if !UNITY_EDITOR && facebook_enabled
+            var param = new Dictionary<string, object>();
+            param[AppEventParameterName.Currency] = "USD";
+            FB.LogAppEvent("AdImpression", impressionData.Revenue.Value, param);
+#endif
+        }
+        public static void SendRevAdjust(LevelPlayImpressionData impressionData)
         {
 #if !UNITY_EDITOR && adjust_enabled
             if (impressionData is null)
@@ -346,14 +370,14 @@ namespace Dktech.Services.Firebase
                 return;
             }
             AdjustAdRevenue adjustAdRevenue = new("ironsource_sdk");
-            adjustAdRevenue.SetRevenue(impressionData.revenue.Value, "USD");
+            adjustAdRevenue.SetRevenue(impressionData.Revenue.Value, "USD");
             // optional fields
-            adjustAdRevenue.AdRevenueNetwork = impressionData.adNetwork;
-            adjustAdRevenue.AdRevenueUnit = impressionData.adUnit;
-            adjustAdRevenue.AdRevenuePlacement = impressionData.placement;
+            adjustAdRevenue.AdRevenueNetwork = impressionData.AdNetwork;
+            adjustAdRevenue.AdRevenueUnit = impressionData.MediationAdUnitName;
+            adjustAdRevenue.AdRevenuePlacement = impressionData.Placement;
             // Send Adjust ad revenue
             Adjust.TrackAdRevenue(adjustAdRevenue);
-            Debug.LogError("DKTech SDK: Send revenue Ironsource to Adjust: " + impressionData.revenue.Value);
+            Debug.LogError("DKTech SDK: Send revenue Ironsource to Adjust: " + impressionData.Revenue.Value);
 #endif
 
         }
@@ -369,6 +393,14 @@ namespace Dktech.Services.Firebase
             adRevenue.AdRevenueNetwork = "Admob";
             Adjust.TrackAdRevenue(adRevenue);
             Debug.LogError("DKTech SDK: Send revenue Admob to Adjust: " + (adValue.Value / 1000000f));
+#endif
+        }
+        public static void SendRevFacebook(GoogleMobileAds.Api.AdValue adValue)
+        {
+#if !UNITY_EDITOR && facebook_enabled
+            var param = new Dictionary<string, object>();
+            param[AppEventParameterName.Currency] = "USD";
+            FB.LogAppEvent("AdImpression", adValue.Value / 1000000f, param);
 #endif
         }
         public static void SendRevFirebase(GoogleMobileAds.Api.AdValue adValue, string adSourceName)
@@ -388,7 +420,7 @@ namespace Dktech.Services.Firebase
 #endif
         }
 #endif
-        #endregion
+#endregion
     }
     [Serializable]
     public class RemoteConfigRequest

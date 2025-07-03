@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   useAdmob: 1
   useAdmobNative: 1
-  useApplovin: 0
+  useApplovin: 1
   useIronsource: 0
   useFirebase: 1
   useFacebook: 1

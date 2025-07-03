@@ -1,5 +1,6 @@
 #if ironsource_enabled
 using com.unity3d.mediation;
+using Dktech.Services.Firebase;
 #endif
 using System;
 using UnityEngine;
@@ -50,7 +51,7 @@ namespace Dktech.Services.Advertisement
                 CheckSwitchID();
                 retryAttempt++;
                 double retryDelay = Math.Pow(2, Math.Min(6, retryAttempt));
-                Invoke(nameof(LoadAd), (float)retryDelay);
+                DelayLoadAd((int)retryDelay * 1000);
             };
             // Raised when a click is recorded for an ad.
             rewardedAd.OnAdClicked += (info) =>
@@ -76,7 +77,7 @@ namespace Dktech.Services.Advertisement
                 {
                     adClosed = true;
                 }
-                adManager.DelayHiddenAd();
+                OnAdClosed?.Invoke();
                 if (autoReload) LoadAd();
             };
             // Raised when the ad eared rewarded
@@ -107,7 +108,7 @@ namespace Dktech.Services.Advertisement
             };
         }
 
-        public override void ShowAd(RewardedAction rewardedAction)
+        public override void ShowAd(Action<bool> rewardedAction)
         {
             RewardedAd.rewardedAction = rewardedAction;
             adClosed = false;
@@ -125,7 +126,7 @@ namespace Dktech.Services.Advertisement
             }
             else
             {
-                Toast.instance.ShowToastUI("No ads avaiable!");
+                Toast.ShowToastUI("No ads avaiable!");
                 if (rewardedAction != null)
                 {
                     rewardedAction?.Invoke(false);

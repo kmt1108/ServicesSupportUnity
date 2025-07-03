@@ -1,5 +1,6 @@
 #if ironsource_enabled
 using com.unity3d.mediation;
+using Dktech.Services.Firebase;
 #endif
 using System;
 using UnityEngine;
@@ -22,7 +23,7 @@ namespace Dktech.Services.Advertisement
 #if ironsource_enabled
         public override void LoadAd()
         {
-            if (IsInvoking(nameof(LoadAd))) return;
+            if (waitingDelayReload) return;
             if (bannerAd != null)
             {
                 DestroyAd();
@@ -42,7 +43,7 @@ namespace Dktech.Services.Advertisement
         }
         public override void LoadAndShowAd()
         {
-            if (IsInvoking(nameof(LoadAd))) return;
+            if (waitingDelayReload) return;
             if (bannerAd != null)
             {
                 DestroyAd();
@@ -83,7 +84,7 @@ namespace Dktech.Services.Advertisement
                 CheckSwitchID();
                 retryAttempt++;
                 double retryDelay = Math.Pow(2, Math.Min(6, retryAttempt));
-                Invoke(nameof(LoadAd),(float)retryDelay);
+                DelayLoadAd((int)retryDelay*1000);
             };
             // Raised when a click is recorded for an ad.
             bannerAd.OnAdClicked += (info) =>

@@ -60,6 +60,7 @@ namespace Dktech.Services.Advertisement
                     adInfo.Revenue));
             FirebaseManager.SendRevFirebase(adInfo);
             FirebaseManager.SendRevAdjust(adInfo);
+            FirebaseManager.SendRevFacebook(adInfo);
         }
         public override void ShowAd()
         {

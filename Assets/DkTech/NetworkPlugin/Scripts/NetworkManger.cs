@@ -68,7 +68,9 @@ namespace Dktech.Services.Advertisement
             NetworkManager.isConnected = isConnected;
             if (isConnected)
             {
+#if firebase_enabled
                 FirebaseManager.CheckReloadRemoteConfig();
+#endif
             }
             if (checkInternet)
             {

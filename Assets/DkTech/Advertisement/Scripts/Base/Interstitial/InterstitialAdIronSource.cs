@@ -1,5 +1,6 @@
 #if ironsource_enabled
 using com.unity3d.mediation;
+using Dktech.Services.Firebase;
 #endif
 using System;
 using System.Threading.Tasks;
@@ -49,7 +50,7 @@ namespace Dktech.Services.Advertisement
                 CheckSwitchID();
                 retryAttempt++;
                 double retryDelay = Math.Pow(2, Math.Min(6, retryAttempt));
-                Invoke(nameof(LoadAd), (float)retryDelay);
+                DelayLoadAd((int)retryDelay*1000);
             };
             // Raised when a click is recorded for an ad.
             interstitialAd.OnAdClicked += (info) =>
@@ -61,22 +62,20 @@ namespace Dktech.Services.Advertisement
             {
                 Debug.Log(IRONSOURCE_LABEL + "full screen content opened.");
                 IsShowing = true;
-                adManager.HideLoadingPanel();
+                OnAdShowed?.Invoke();
             };
             // Raised when the ad closed full screen content.
             interstitialAd.OnAdClosed += (info) =>
             {
                 Debug.Log(IRONSOURCE_LABEL + "full screen content closed.");
-                adManager.OnAdClosed();
+                OnAdClosed?.Invoke();
                 if(autoReload) LoadAd();
-                adManager.RestartWaitForInter();
-                adManager.DelayHiddenAd();
             };
             // Raised when the ad failed to open full screen content.
             interstitialAd.OnAdDisplayFailed += (error) =>
             {
                 Debug.LogError(IRONSOURCE_LABEL+"failed to open full screen content with error : " + error);
-                adManager.OnAdShowFailed();
+                OnAdShowFailed?.Invoke();
                 if(autoReload) LoadAd();
                 IsShowing = false;
             };
@@ -86,16 +85,16 @@ namespace Dktech.Services.Advertisement
         {
             if (IsAvailable())
             {
-                adManager.ShowLoadingPanel();
+                OnStartShowAd?.Invoke();
                 interstitialAd.ShowAd();
                 IsShowing = true;
                 FirebaseManager.TrackEvent("INTERSTITIAL_ADS");
-            }else adManager.OnAdShowFailed();
+            }else OnAdShowFailed?.Invoke();
         }
 
         public override bool IsAvailable()
         {
-            return !InterstitialAdManager.waitingForInter && interstitialAd.IsAdReady() && !AdsUtilities.NoAds;
+            return !InterstitialAdManager.WaitingForInter && interstitialAd.IsAdReady() && !AdsUtilities.NoAds;
         }
 #else
         public override void LoadAd()

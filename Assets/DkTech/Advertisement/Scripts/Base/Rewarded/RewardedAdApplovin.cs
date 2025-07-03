@@ -87,6 +87,7 @@ namespace Dktech.Services.Advertisement
                     adInfo.Revenue));
             FirebaseManager.SendRevFirebase(adInfo);
             FirebaseManager.SendRevAdjust(adInfo);
+            FirebaseManager.SendRevFacebook(adInfo);
         }
 
         public override void ShowAd(Action<bool> rewardedAction)
@@ -106,7 +107,7 @@ namespace Dktech.Services.Advertisement
             }
             else
             {
-                Toast.instance.ShowToastUI("No ads avaiable!");
+                Toast.ShowToastUI("No ads avaiable!");
                 if (rewardedAction != null)
                 {
                     rewardedAction?.Invoke(false);

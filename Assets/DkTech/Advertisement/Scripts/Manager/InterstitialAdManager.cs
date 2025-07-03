@@ -65,11 +65,9 @@ namespace Dktech.Services.Advertisement
 #endif
 #if ironsource_enabled
                     case AdNetwork.IronSource:
-                        GameObject interIrsObj = new(listAdRequest[i].adName);
-                        interIrsObj.transform.SetParent(transform);
-                        InterstitialAdIronSource interIrs = interIrsObj.AddComponent<InterstitialAdIronSource>();
+                        InterstitialAdIronSource interIrs = new();
                         listInterAd.Add(interIrs);
-                        interIrs.Setup(listAdRequest[i], this);
+                        interIrs.Setup(listAdRequest[i]);
                         break;
 #endif
                     default:

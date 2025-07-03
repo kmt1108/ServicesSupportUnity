@@ -51,7 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f5e70e62ba822a4d962f8da97e9903c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  emailRate: 
+  emailRate: tienkm@dktechgroup.com
 --- !u!223 &3484151331994564186
 Canvas:
   m_ObjectHideFlags: 0

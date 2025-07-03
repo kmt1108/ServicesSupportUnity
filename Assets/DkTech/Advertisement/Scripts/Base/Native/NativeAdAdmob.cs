@@ -81,6 +81,7 @@ namespace Dktech.Services.Advertisement
                 Debug.LogWarning("DKTech SDK: Can't get Ad Network");
             }
             FirebaseManager.SendRevAdjust(e.AdValue, adapter);
+            FirebaseManager.SendRevFacebook(e.AdValue);
         }
         private bool CheckTestDevice(GoogleMobileAds.Api.NativeAd ad)
         {

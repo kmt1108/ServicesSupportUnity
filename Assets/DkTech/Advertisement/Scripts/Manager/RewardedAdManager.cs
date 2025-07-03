@@ -55,11 +55,9 @@ namespace Dktech.Services.Advertisement
 #endif
 #if ironsource_enabled
                     case AdNetwork.IronSource:
-                        GameObject rewardIrsObj = new(listAdRequest[i].adName);
-                        rewardIrsObj.transform.SetParent(transform);
-                        RewardedAdIronSource rewardIrs = rewardIrsObj.AddComponent<RewardedAdIronSource>();
+                        RewardedAdIronSource rewardIrs = new();
                         listRewardedAd.Add(rewardIrs);
-                        rewardIrs.Setup(listAdRequest[i], this);
+                        rewardIrs.Setup(listAdRequest[i]);
                         break;
 #endif
                     default:

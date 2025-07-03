@@ -12,10 +12,6 @@ namespace Dktech.Services.Advertisement
 #if ironsource_enabled
         [Header("IRONSOURCE PROPERTIES")]
         [SerializeField] private string ironsourceAppKey;
-        [SerializeField] private string ironsourceUserId;
-        [SerializeField] private bool ironsourceBanner;
-        [SerializeField] private bool ironsourceInter;
-        [SerializeField] private bool ironsourceReward;
 #endif
         #endregion
 
@@ -91,26 +87,6 @@ namespace Dktech.Services.Advertisement
         {
             get => ironsourceAppKey;
             set => ironsourceAppKey = value;
-        }
-        public string IronsourceUserId
-        {
-            get => ironsourceUserId;
-            set => ironsourceUserId = value;
-        }
-        public bool IronsourceBanner
-        {
-            get => ironsourceBanner;
-            set => ironsourceBanner = value;
-        }
-        public bool IronsourceInter
-        {
-            get => ironsourceInter;
-            set => ironsourceInter = value;
-        }
-        public bool IronsourceReward
-        {
-            get => ironsourceReward;
-            set => ironsourceReward = value;
         }
 #endif
 

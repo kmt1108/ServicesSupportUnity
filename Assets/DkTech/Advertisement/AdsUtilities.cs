@@ -3,18 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using Dktech.Services.Firebase;
-using Dktech.Services;
+#if facebook_enabled
+using Facebook.Unity;
+#endif
 #if admob_enabled
 using GoogleMobileAds.Api;
 using GoogleMobileAds.Ump.Api;
 #endif
 #if ironsource_enabled
-using com.unity3d.mediation;
+using Unity.Services.LevelPlay;
 #endif
 
 namespace Dktech.Services.Advertisement
 {
-    public class AdsUtilities
+    public static class AdsUtilities
     {
         #region Event Listener
         public static Action OnLoadPrimaryAdCompleted { get; set; }
@@ -69,10 +71,6 @@ namespace Dktech.Services.Advertisement
         {
             LoadSettings();
             InitAdsManager();
-            ServicesManager.OnApplicationPauseEvent += (paused) =>
-            {
-                OnApplicationPause(paused);
-            };
 #if admob_enabled
             MobileAds.RaiseAdEventsOnUnityMainThread = true;
             MobileAds.SetiOSAppPauseOnBackground(true);
@@ -81,6 +79,18 @@ namespace Dktech.Services.Advertisement
             if (FirstOpen) PlayerPrefs.SetInt("first_open", 1);
 #if admob_enabled
             SetUpMediationAdmob();
+#endif
+#if facebook_enabled
+            if (!FB.IsInitialized)
+            {
+                // Initialize the Facebook SDK
+                FB.Init(InitCallback, OnHideUnity);
+            }
+            else
+            {
+                // Already initialized, signal an app activation App Event
+                FB.ActivateApp();
+            }
 #endif
             InitAdNetwork();
 
@@ -249,6 +259,39 @@ namespace Dktech.Services.Advertisement
             }                                                                                                      
         }
 
+        #region Facebook Method
+#if facebook_enabled
+        private static void InitCallback()
+        {
+            if (FB.IsInitialized)
+            {
+                // Signal an app activation App Event
+                FB.ActivateApp();
+                // Continue with Facebook SDK
+                // ...
+            }
+            else
+            {
+                Debug.Log("Failed to Initialize the Facebook SDK");
+            }
+        }
+
+        private static void OnHideUnity(bool isGameShown)
+        {
+            if (!isGameShown)
+            {
+                // Pause the game - we will need to hide
+                Time.timeScale = 0;
+            }
+            else
+            {
+                // Resume the game - we're getting focus again
+                Time.timeScale = 1;
+            }
+        }
+#endif
+        #endregion
+
         #region Admob Method
 
 #if admob_enabled
@@ -307,49 +350,37 @@ namespace Dktech.Services.Advertisement
 
         #region Ironsource Method
 #if ironsource_enabled
-        private void InitIronsource()
+        private static void InitIronsource()
         {
-            // Init the SDK when implementing the Multiple Ad Units API for Interstitial and Banner formats, with Rewarded using legacy APIs. 
-            List<LevelPlayAdFormat> legacyAdFormats = new();
-            if (ironsourceBanner) legacyAdFormats.Add(LevelPlayAdFormat.BANNER);
-            if (ironsourceInter) legacyAdFormats.Add(LevelPlayAdFormat.INTERSTITIAL);
-            if (ironsourceReward) legacyAdFormats.Add(LevelPlayAdFormat.REWARDED);
-            //LevelPlayAdFormat[] legacyAdFormats = new[] { LevelPlayAdFormat.REWARDED };
-            if (legacyAdFormats.Count > 0)
-            {
                 LevelPlay.OnInitSuccess += SdkInitializationCompletedEvent;
                 LevelPlay.OnInitFailed += SdkInitializationFailedEvent;
-                if (isTestMode)
+                if (IsTestMode)
                 {
 #if UNITY_ANDROID
-                    ironsourceAppKey = "85460dcd";
+                    settings.IronsourceAppKey = "85460dcd";
 #elif UNITY_IPHONE
-                    ironsourceAppKey = "8545d445";
+                    settings.IronsourceAppKey = "8545d445";
 #endif
                 }
-                IronSourceEvents.onImpressionDataReadyEvent += ImpressionDataReadyEvent;
-                LevelPlay.Init(ironsourceAppKey, ironsourceUserId, legacyAdFormats.ToArray());
-                IronSource.Agent.validateIntegration();
-            }
-            else
-            {
-                throw new NotImplementedException("DKTech Error: Please choose ads formats for Ironsource SDK");
-            }
+                LevelPlay.OnImpressionDataReady += ImpressionDataReadyEvent;
+                LevelPlay.Init(settings.IronsourceAppKey);
+                LevelPlay.ValidateIntegration();
 
         }
-        private void ImpressionDataReadyEvent(IronSourceImpressionData impressionData)
+        private static void ImpressionDataReadyEvent(LevelPlayImpressionData impressionData)
         {
-            if (isTestMode) return;
+            if (IsTestMode) return;
             FirebaseManager.SendRevFirebase(impressionData);
             FirebaseManager.SendRevAdjust(impressionData);
+            FirebaseManager.SendRevFacebook(impressionData);
         }
 
-        private void SdkInitializationFailedEvent(LevelPlayInitError error)
+        private static void SdkInitializationFailedEvent(LevelPlayInitError error)
         {
             Debug.Log("DKTech: Ironsource initialization failed");
         }
 
-        private void SdkInitializationCompletedEvent(LevelPlayConfiguration configuration)
+        private static void SdkInitializationCompletedEvent(LevelPlayConfiguration configuration)
         {
             Debug.Log("DKTech: Ironsource initialization completed");
             initCompleteNetwork++;
@@ -359,13 +390,6 @@ namespace Dktech.Services.Advertisement
 #endregion
 
         #region Common Method
-
-        private static void OnApplicationPause(bool pause)
-        {
-#if ironsource_enabled
-            IronSource.Agent.onApplicationPause(pause);
-#endif
-        }
 
         internal static void ShowLoadingPanel(bool isShow)
         {
@@ -388,7 +412,7 @@ namespace Dktech.Services.Advertisement
             {
                 Debug.LogError("CMP: START 01");
 #if ironsource_enabled
-                IronSource.Agent.setConsent(isCMPConsent());
+                LevelPlay.SetConsent(isCMPConsent());
 #endif
                 CMP_ACCEPT = true;
                 InitLoadAds();
@@ -412,7 +436,7 @@ namespace Dktech.Services.Advertisement
                 ConsentInformation.Update(request, OnConsentInfoUpdated);
             }
         }
-        public void CheckReloadCMP_With_Level(int level, Action<bool> actionResult)
+        public static void CheckReloadCMP_With_Level(int level, Action<bool> actionResult)
         {
             if (CMP_ACCEPT) return;
             if (!CanShowAds() || !CanShowPersonalizedAds())
@@ -430,14 +454,14 @@ namespace Dktech.Services.Advertisement
                 }
             }
         }
-        public void CheckReloadCMP()
+        public static void CheckReloadCMP()
         {
             if (!CanShowAds() || !CanShowPersonalizedAds())
             {
                 ResetCMP_Admod();
             }
         }
-        bool isCheckLevel_With_CMP_Firebase(int level)
+        private static bool isCheckLevel_With_CMP_Firebase(int level)
         {
             bool isResultShow_Cmp = false;
             for (int i = 0; i < SettingShowCMP.Count; i++)
@@ -449,7 +473,7 @@ namespace Dktech.Services.Advertisement
             }
             return isResultShow_Cmp;
         }
-        public void ResetCMP_Admod()
+        public static void ResetCMP_Admod()
         {
             ConsentInformation.Reset();
             ConsentRequestParameters request = new ConsentRequestParameters
@@ -497,7 +521,7 @@ namespace Dktech.Services.Advertisement
                 }
             });
         }
-        bool isCMPConsent()
+        private static bool isCMPConsent()
         {
             string myConsent = PlayerPrefs.GetString("IABTCF_AddtlConsent", "");
             Debug.LogError("isCMPConsent: myConsent :" + myConsent);
@@ -512,7 +536,7 @@ namespace Dktech.Services.Advertisement
             }
         }
         // Check if GDPR applies
-        bool IsGDPR()
+        private static bool IsGDPR()
         {
             // Replace with appropriate PlayerPrefs or other storage method
             int gdpr = PlayerPrefs.GetInt("IABTCF_gdprApplies", 0);

@@ -124,6 +124,7 @@ namespace Dktech.Services.Advertisement
                     Debug.LogWarning("DKTech SDK: Can't get Ad Network");
                 }
                 FirebaseManager.SendRevAdjust(adValue, adapter);
+                FirebaseManager.SendRevFacebook(adValue);
             };
             // Raised when an impression is recorded for an ad.
             _bannerView.OnAdImpressionRecorded += () =>
