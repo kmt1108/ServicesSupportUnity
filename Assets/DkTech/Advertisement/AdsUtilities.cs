@@ -393,7 +393,7 @@ namespace Dktech.Services.Advertisement
 
         internal static void ShowLoadingPanel(bool isShow)
         {
-            //throw new NotImplementedException();//
+            ServicesManager.instance.ShowLoadingAd(isShow);
         }
 
         #endregion

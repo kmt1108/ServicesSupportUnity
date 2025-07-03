@@ -111,7 +111,7 @@ GameObject:
   - component: {fileID: 1005916785822070047}
   - component: {fileID: 1005916785822070046}
   m_Layer: 5
-  m_Name: LoadingAds
+  m_Name: LoadingAd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -30,7 +30,10 @@ namespace Dktech.Services.Advertisement
         }
         private static void InitNativeReceiver()
         {
-#if UNITY_ANDROID && !UNITY_EDITOR
+            #if UNITY_EDITOR
+            isConnected = Application.internetReachability!=NetworkReachability.NotReachable;
+#else
+#if UNITY_ANDROID
             using (AndroidJavaClass unityPlayer = new("com.unity3d.player.UnityPlayer"))
             {
                 AndroidJavaObject activity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
@@ -41,11 +44,11 @@ namespace Dktech.Services.Advertisement
                     Debug.Log("Current State: " + isConnected);*/
                 }
             }
-            #endif
-            #if UNITY_IOS && !UNITY_EDITOR
-                startListening();
-                /*Debug.Log("Current State: " + getCurrentNetworkState());*/
-            #endif
+#elif UNITY_IOS
+            startListening();
+            /*Debug.Log("Current State: " + getCurrentNetworkState());*/
+#endif
+#endif
 
         }
         public static void SetCheckInternet(bool isCheck)

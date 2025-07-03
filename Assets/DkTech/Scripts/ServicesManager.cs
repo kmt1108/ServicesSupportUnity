@@ -15,6 +15,7 @@ namespace Dktech.Services
         const string RATE_UI_PATH = "UI/Rate";
         const string TOAST_UI_PATH = "UI/Toast";
         const string NO_INTERNET_UI_PATH = "UI/NoInternet";
+        const string LOADING_AD_PATH = "UI/LoadingAd";
         public static Action<bool> OnApplicationPauseEvent { get; set; }
 
         [SerializeField] string emailRate;
@@ -28,6 +29,7 @@ namespace Dktech.Services
         Rating rateUI;
         GameObject toastUI;
         GameObject noInternet;
+        GameObject loadingAd;
         // Start is called before the first frame update
         protected override void Awake()
         {
@@ -72,6 +74,16 @@ namespace Dktech.Services
                 return;
             }
             noInternet.SetActive(isShow);
+        }
+        public void ShowLoadingAd(bool isShow)
+        {
+            if (!loadingAd)
+            {
+                if (!isShow) return;
+                loadingAd = Instantiate(Resources.Load<GameObject>(LOADING_AD_PATH), transform);
+                return;
+            }
+            loadingAd.SetActive(isShow);
         }
         public void ShowToastOnUI(string message, float time = 1f)
         {
@@ -134,6 +146,7 @@ namespace Dktech.Services
         }
         #endregion
 
+        #region In-App Update
 #if google_update_enabled && !UNITY_EDITOR
         public void StartCheckUpdate(Action action)
         {
@@ -228,5 +241,6 @@ namespace Dktech.Services
             }
         }
 #endif
+        #endregion
     }
 }
